@@ -23,7 +23,6 @@
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-extern DMA_HandleTypeDef hdma_hrtim1_a;
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
@@ -99,25 +98,6 @@ void HAL_HRTIM_MspInit(HRTIM_HandleTypeDef* hhrtim)
     /* USER CODE END HRTIM1_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_HRTIM1_CLK_ENABLE();
-
-    /* HRTIM1 DMA Init */
-    /* HRTIM1_A Init */
-    hdma_hrtim1_a.Instance = DMA1_Channel2;
-    hdma_hrtim1_a.Init.Request = DMA_REQUEST_HRTIM1_A;
-    hdma_hrtim1_a.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_hrtim1_a.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_hrtim1_a.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_hrtim1_a.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
-    hdma_hrtim1_a.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
-    hdma_hrtim1_a.Init.Mode = DMA_NORMAL;
-    hdma_hrtim1_a.Init.Priority = DMA_PRIORITY_LOW;
-    if (HAL_DMA_Init(&hdma_hrtim1_a) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(hhrtim,hdmaTimerA,hdma_hrtim1_a);
-
     /* USER CODE BEGIN HRTIM1_MspInit 1 */
 
     /* USER CODE END HRTIM1_MspInit 1 */
@@ -135,12 +115,24 @@ void HAL_HRTIM_MspPostInit(HRTIM_HandleTypeDef* hhrtim)
 
     /* USER CODE END HRTIM1_MspPostInit 0 */
 
+    __HAL_RCC_GPIOB_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
     /**HRTIM1 GPIO Configuration
+    PB12     ------> HRTIM1_CHC1
+    PB13     ------> HRTIM1_CHC2
     PA8     ------> HRTIM1_CHA1
     PA9     ------> HRTIM1_CHA2
+    PA10     ------> HRTIM1_CHB1
+    PA11     ------> HRTIM1_CHB2
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9;
+    GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_13;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF13_HRTIM1;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -168,9 +160,6 @@ void HAL_HRTIM_MspDeInit(HRTIM_HandleTypeDef* hhrtim)
     /* USER CODE END HRTIM1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_HRTIM1_CLK_DISABLE();
-
-    /* HRTIM1 DMA DeInit */
-    HAL_DMA_DeInit(hhrtim->hdmaTimerA);
     /* USER CODE BEGIN HRTIM1_MspDeInit 1 */
 
     /* USER CODE END HRTIM1_MspDeInit 1 */
