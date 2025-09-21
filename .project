@@ -36,9 +36,29 @@
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_adc.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_adc_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_adc_ex.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_cortex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_dac.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dac.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_dac_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_dac_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_dma.c</name>
@@ -81,6 +101,16 @@
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_hrtim.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_opamp.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_opamp.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_opamp_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_opamp_ex.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_pwr.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr.c</locationURI>
@@ -119,6 +149,11 @@
 			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_hal_usart_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart_ex.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32G4xx_HAL_Driver/stm32g4xx_ll_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_G4_V1.6.1/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_ll_adc.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/STM32G4xx_Nucleo/stm32g4xx_nucleo.c</name>
