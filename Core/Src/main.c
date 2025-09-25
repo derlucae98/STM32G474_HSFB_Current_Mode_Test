@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2025 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -47,6 +47,9 @@ DMA_HandleTypeDef hdma_adc1;
 
 DAC_HandleTypeDef hdac3;
 
+FMAC_HandleTypeDef hfmac;
+DMA_HandleTypeDef hdma_fmac_read;
+
 HRTIM_HandleTypeDef hhrtim1;
 
 OPAMP_HandleTypeDef hopamp6;
@@ -63,31 +66,13 @@ static void MX_HRTIM1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_DAC3_Init(void);
 static void MX_OPAMP6_Init(void);
+static void MX_FMAC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-// Start parameters from WDS:
-#define REF (512)
-#define B0 (0x1B38)
-#define B1 (0xE)
-#define B2 (0xE4D6)
-#define A1 (0x6000)
-#define A2 (0xE000)
-#define pre_shift (+3)
-#define post_shift (+1)
-#define DUTY_TICKS_MIN (0)
-#define DUTY_TICKS_MAX (3686)
-#define SLOPE_VPP (0.4556)
-#define DECVAL (1.6627)
-
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
-	HAL_GPIO_TogglePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin);
-}
-
 
 /* USER CODE END 0 */
 
@@ -125,22 +110,10 @@ int main(void)
   MX_ADC1_Init();
   MX_DAC3_Init();
   MX_OPAMP6_Init();
+  MX_FMAC_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
-  HAL_OPAMP_Start(&hopamp6);
-  HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&hdac3.Instance->DHR12L1, 1);
-  __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT | DMA_IT_TC );
-
-  HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA1);
-  HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA2);
-  HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB1);
-  HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB2);
-  HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC1);
-  HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC2);
-  HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TE1);
-
-  HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1, HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B | HRTIM_TIMERID_TIMER_C | HRTIM_TIMERID_TIMER_D | HRTIM_TIMERID_TIMER_E);
+    app_init();
 
   /* USER CODE END 2 */
 
@@ -163,12 +136,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+    while (1) {
+        app_loop();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+    }
   /* USER CODE END 3 */
 }
 
@@ -242,7 +215,7 @@ static void MX_ADC1_Init(void)
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_LEFT;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc1.Init.GainCompensation = 0;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
@@ -330,6 +303,32 @@ static void MX_DAC3_Init(void)
   /* USER CODE BEGIN DAC3_Init 2 */
 
   /* USER CODE END DAC3_Init 2 */
+
+}
+
+/**
+  * @brief FMAC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_FMAC_Init(void)
+{
+
+  /* USER CODE BEGIN FMAC_Init 0 */
+
+  /* USER CODE END FMAC_Init 0 */
+
+  /* USER CODE BEGIN FMAC_Init 1 */
+
+  /* USER CODE END FMAC_Init 1 */
+  hfmac.Instance = FMAC;
+  if (HAL_FMAC_Init(&hfmac) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN FMAC_Init 2 */
+
+  /* USER CODE END FMAC_Init 2 */
 
 }
 
@@ -625,6 +624,9 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
+  /* DMA1_Channel2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
 }
 
@@ -673,11 +675,10 @@ static void MX_GPIO_Init(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+    /* User can add his own implementation to report the HAL error return state */
+    __disable_irq();
+    while (1) {
+    }
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
