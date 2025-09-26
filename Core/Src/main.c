@@ -47,9 +47,6 @@ DMA_HandleTypeDef hdma_adc1;
 
 DAC_HandleTypeDef hdac3;
 
-FMAC_HandleTypeDef hfmac;
-DMA_HandleTypeDef hdma_fmac_read;
-
 HRTIM_HandleTypeDef hhrtim1;
 
 OPAMP_HandleTypeDef hopamp6;
@@ -66,7 +63,6 @@ static void MX_HRTIM1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_DAC3_Init(void);
 static void MX_OPAMP6_Init(void);
-static void MX_FMAC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -110,7 +106,6 @@ int main(void)
   MX_ADC1_Init();
   MX_DAC3_Init();
   MX_OPAMP6_Init();
-  MX_FMAC_Init();
   /* USER CODE BEGIN 2 */
 
     app_init();
@@ -303,32 +298,6 @@ static void MX_DAC3_Init(void)
   /* USER CODE BEGIN DAC3_Init 2 */
 
   /* USER CODE END DAC3_Init 2 */
-
-}
-
-/**
-  * @brief FMAC Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_FMAC_Init(void)
-{
-
-  /* USER CODE BEGIN FMAC_Init 0 */
-
-  /* USER CODE END FMAC_Init 0 */
-
-  /* USER CODE BEGIN FMAC_Init 1 */
-
-  /* USER CODE END FMAC_Init 1 */
-  hfmac.Instance = FMAC;
-  if (HAL_FMAC_Init(&hfmac) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN FMAC_Init 2 */
-
-  /* USER CODE END FMAC_Init 2 */
 
 }
 
@@ -624,9 +593,6 @@ static void MX_DMA_Init(void)
   /* DMA1_Channel1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-  /* DMA1_Channel2_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 
 }
 
