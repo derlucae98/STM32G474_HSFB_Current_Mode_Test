@@ -75,10 +75,8 @@ uint16_t ctrl_2p2z_update(ctrl_2p2z_t *ctrl, uint16_t input, uint16_t ref) {
     float ya2 = ctrl->ctrl_2p2z_A2 * ctrl->ctrl_2p2z_y[0];
 
     ctrl->ctrl_2p2z_y[2] = yb0 + yb1 + yb2 + ya1 + ya2;
-    ctrl->ctrl_2p2z_y[2] = ctrl->ctrl_2p2z_y[2] * ctrl->ctrl_2p2z_K;
 
     // Clamp output to max and min value
-
     if (ctrl->ctrl_2p2z_y[2] >= ctrl->ctrl_2p2z_sat_max) {
         ctrl->ctrl_2p2z_y[2] = ctrl->ctrl_2p2z_sat_max;
     }
@@ -96,12 +94,11 @@ void ctrl_2p2z_init(ctrl_2p2z_t *ctrl, float B0, float B1, float B2, float A1, f
     ctrl->ctrl_2p2z_y[0] = 0.0f;
     ctrl->ctrl_2p2z_y[1] = 0.0f;
     ctrl->ctrl_2p2z_y[2] = 0.0f;
-    ctrl->ctrl_2p2z_B0 = B0;
-    ctrl->ctrl_2p2z_B1 = B1;
-    ctrl->ctrl_2p2z_B2 = B2;
+    ctrl->ctrl_2p2z_B0 = B0 * K;
+    ctrl->ctrl_2p2z_B1 = B1 * K;
+    ctrl->ctrl_2p2z_B2 = B2 * K;
     ctrl->ctrl_2p2z_A1 = A1;
     ctrl->ctrl_2p2z_A2 = A2;
-    ctrl->ctrl_2p2z_K = K;
     ctrl->ctrl_2p2z_sat_min = sat_min;
     ctrl->ctrl_2p2z_sat_max = sat_max;
 }

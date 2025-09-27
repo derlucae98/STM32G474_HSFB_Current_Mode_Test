@@ -18,13 +18,15 @@ extern HRTIM_HandleTypeDef hhrtim1;
 extern OPAMP_HandleTypeDef hopamp6;
 
 // Start parameters from WDS:
+#define U_K (1.0f)
+//#define K (+10.821607546241f)
 #define U_B0 (+0.314417183586f)
 #define U_B1 (+0.000626689610f)
 #define U_B2 (-0.313790493976f)
 #define U_A1 (+1.500000000000f)
 #define U_A2 (-0.500000000000f)
-//#define K (+10.821607546241f)
-#define U_K (1.0f)
+
+
 #define REF (2048)
 #define DUTY_TICKS_MIN (0)
 #define DUTY_TICKS_MAX (3686)
@@ -37,7 +39,6 @@ typedef struct ctrl_2p2z {
     float ctrl_2p2z_B2;
     float ctrl_2p2z_A1;
     float ctrl_2p2z_A2;
-    float ctrl_2p2z_K;
     float ctrl_2p2z_x[3];
     float ctrl_2p2z_y[3];
     uint32_t ctrl_2p2z_sat_min;
