@@ -40,9 +40,11 @@ typedef struct ctrl_2p2z {
     float ctrl_2p2z_K;
     float ctrl_2p2z_x[3];
     float ctrl_2p2z_y[3];
+    uint32_t ctrl_2p2z_sat_min;
+    uint32_t ctrl_2p2z_sat_max;
 } ctrl_2p2z_t;
 
-void ctrl_2p2z_init(ctrl_2p2z_t *ctrl, float B0, float B1, float B2, float A1, float A2, float K);
+void ctrl_2p2z_init(ctrl_2p2z_t *ctrl, float B0, float B1, float B2, float A1, float A2, float K, uint32_t sat_min, uint32_t sat_max);
 uint16_t ctrl_2p2z_update(ctrl_2p2z_t *ctrl, uint16_t input, uint16_t ref);
 
 void app_init(void);

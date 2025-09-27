@@ -20,19 +20,19 @@ void BSP_PB_Callback(Button_TypeDef Button) {
 volatile uint32_t adc_val = 0;
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
+
+
     HAL_GPIO_WritePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin, 1);
-
-
     uint16_t dac_val = ctrl_2p2z_update(&ctrl_u, adc_val, REF);
 
     HAL_DAC_SetValue(&hdac3, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_val);
-
     HAL_GPIO_WritePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin, 0);
+
 }
 
 void app_init(void) {
 
-    ctrl_2p2z_init(&ctrl_u, U_B0, U_B1, U_B2, U_A1, U_A2, U_K);
+    ctrl_2p2z_init(&ctrl_u, U_B0, U_B1, U_B2, U_A1, U_A2, U_K, 0, 4095);
 
     HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
     HAL_OPAMP_Start(&hopamp6);
@@ -78,17 +78,18 @@ uint16_t ctrl_2p2z_update(ctrl_2p2z_t *ctrl, uint16_t input, uint16_t ref) {
     ctrl->ctrl_2p2z_y[2] = ctrl->ctrl_2p2z_y[2] * ctrl->ctrl_2p2z_K;
 
     // Clamp output to max and min value
-    if (ctrl->ctrl_2p2z_y[2] >= 4095.0f) {
-        ctrl->ctrl_2p2z_y[2] = 4095.0f;
+
+    if (ctrl->ctrl_2p2z_y[2] >= ctrl->ctrl_2p2z_sat_max) {
+        ctrl->ctrl_2p2z_y[2] = ctrl->ctrl_2p2z_sat_max;
     }
-    if (ctrl->ctrl_2p2z_y[2] < 0) {
-        ctrl->ctrl_2p2z_y[2] = 0;
+    if (ctrl->ctrl_2p2z_y[2] < ctrl->ctrl_2p2z_sat_min) {
+        ctrl->ctrl_2p2z_y[2] = ctrl->ctrl_2p2z_sat_min;
     }
 
     return (uint16_t) ctrl->ctrl_2p2z_y[2];
 }
 
-void ctrl_2p2z_init(ctrl_2p2z_t *ctrl, float B0, float B1, float B2, float A1, float A2, float K) {
+void ctrl_2p2z_init(ctrl_2p2z_t *ctrl, float B0, float B1, float B2, float A1, float A2, float K, uint32_t sat_min, uint32_t sat_max) {
     ctrl->ctrl_2p2z_x[0] = 0.0f;
     ctrl->ctrl_2p2z_x[1] = 0.0f;
     ctrl->ctrl_2p2z_x[2] = 0.0f;
@@ -101,6 +102,8 @@ void ctrl_2p2z_init(ctrl_2p2z_t *ctrl, float B0, float B1, float B2, float A1, f
     ctrl->ctrl_2p2z_A1 = A1;
     ctrl->ctrl_2p2z_A2 = A2;
     ctrl->ctrl_2p2z_K = K;
+    ctrl->ctrl_2p2z_sat_min = sat_min;
+    ctrl->ctrl_2p2z_sat_max = sat_max;
 }
 
 void app_loop(void) {
