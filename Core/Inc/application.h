@@ -19,13 +19,12 @@ extern OPAMP_HandleTypeDef hopamp6;
 
 // Start parameters from WDS:
 #define U_K (1.0f)
-//#define K (+10.821607546241f)
-#define U_B0 (+0.314417183586f)
-#define U_B1 (+0.000626689610f)
-#define U_B2 (-0.313790493976f)
-#define U_A1 (+1.500000000000f)
-#define U_A2 (-0.500000000000f)
-
+//#define K (+10.821607546241)
+#define U_B0 (+0.179841735439)
+#define U_B1 (+0.001594948285)
+#define U_B2 (-0.178246787154)
+#define U_A1 (+1.714285714286)
+#define U_A2 (-0.714285714286)
 
 #define REF (2048)
 #define DUTY_TICKS_MIN (0)
