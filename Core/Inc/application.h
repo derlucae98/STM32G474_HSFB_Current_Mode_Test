@@ -9,6 +9,7 @@
 #define INC_APPLICATION_H_
 
 #include "main.h"
+#include "stm32g4xx_ll_dac.h"
 
 extern COM_InitTypeDef BspCOMInit;
 extern ADC_HandleTypeDef hadc1;
@@ -18,15 +19,15 @@ extern HRTIM_HandleTypeDef hhrtim1;
 extern OPAMP_HandleTypeDef hopamp6;
 
 // Start parameters from WDS:
-#define U_K (1.0f)
-//#define K (+10.821607546241)
-#define U_B0 (+0.179841735439)
-#define U_B1 (+0.001594948285)
-#define U_B2 (-0.178246787154)
+//#define U_K (1.0f)
+#define U_K (+10.989011)
+#define U_B0 (+0.395070356916)
+#define U_B1 (+0.000393919184)
+#define U_B2 (-0.394676437733)
 #define U_A1 (+1.714285714286)
 #define U_A2 (-0.714285714286)
 
-#define REF (2048)
+#define REF (3614)
 #define DUTY_TICKS_MIN (0)
 #define DUTY_TICKS_MAX (3686)
 #define SLOPE_VPP (0.4556)

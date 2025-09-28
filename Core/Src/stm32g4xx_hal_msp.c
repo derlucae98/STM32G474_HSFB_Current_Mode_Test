@@ -184,6 +184,73 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 }
 
 /**
+  * @brief COMP MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hcomp: COMP handle pointer
+  * @retval None
+  */
+void HAL_COMP_MspInit(COMP_HandleTypeDef* hcomp)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  if(hcomp->Instance==COMP3)
+  {
+    /* USER CODE BEGIN COMP3_MspInit 0 */
+
+    /* USER CODE END COMP3_MspInit 0 */
+
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    /**COMP3 GPIO Configuration
+    PC1     ------> COMP3_INP
+    PC2     ------> COMP3_OUT
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_1;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = GPIO_PIN_2;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF3_COMP3;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    /* USER CODE BEGIN COMP3_MspInit 1 */
+
+    /* USER CODE END COMP3_MspInit 1 */
+
+  }
+
+}
+
+/**
+  * @brief COMP MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param hcomp: COMP handle pointer
+  * @retval None
+  */
+void HAL_COMP_MspDeInit(COMP_HandleTypeDef* hcomp)
+{
+  if(hcomp->Instance==COMP3)
+  {
+    /* USER CODE BEGIN COMP3_MspDeInit 0 */
+
+    /* USER CODE END COMP3_MspDeInit 0 */
+
+    /**COMP3 GPIO Configuration
+    PC1     ------> COMP3_INP
+    PC2     ------> COMP3_OUT
+    */
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_1|GPIO_PIN_2);
+
+    /* USER CODE BEGIN COMP3_MspDeInit 1 */
+
+    /* USER CODE END COMP3_MspDeInit 1 */
+  }
+
+}
+
+/**
   * @brief DAC MSP Initialization
   * This function configures the hardware resources used in this example
   * @param hdac: DAC handle pointer

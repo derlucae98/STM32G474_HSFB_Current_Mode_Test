@@ -26,7 +26,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 
     uint16_t dac_val = ctrl_2p2z_update(&ctrl_u, adc_val, REF);
 
-    HAL_DAC_SetValue(&hdac3, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_val);
+    LL_DAC_SetWaveSawtoothResetData(DAC3, LL_DAC_CHANNEL_1, dac_val);
 
     HAL_GPIO_WritePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin, 0);
 }

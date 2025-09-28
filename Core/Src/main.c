@@ -45,6 +45,8 @@ COM_InitTypeDef BspCOMInit;
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
+COMP_HandleTypeDef hcomp3;
+
 DAC_HandleTypeDef hdac3;
 
 HRTIM_HandleTypeDef hhrtim1;
@@ -63,6 +65,7 @@ static void MX_HRTIM1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_DAC3_Init(void);
 static void MX_OPAMP6_Init(void);
+static void MX_COMP3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -106,6 +109,7 @@ int main(void)
   MX_ADC1_Init();
   MX_DAC3_Init();
   MX_OPAMP6_Init();
+  MX_COMP3_Init();
   /* USER CODE BEGIN 2 */
 
     app_init();
@@ -255,6 +259,38 @@ static void MX_ADC1_Init(void)
 }
 
 /**
+  * @brief COMP3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_COMP3_Init(void)
+{
+
+  /* USER CODE BEGIN COMP3_Init 0 */
+
+  /* USER CODE END COMP3_Init 0 */
+
+  /* USER CODE BEGIN COMP3_Init 1 */
+
+  /* USER CODE END COMP3_Init 1 */
+  hcomp3.Instance = COMP3;
+  hcomp3.Init.InputPlus = COMP_INPUT_PLUS_IO2;
+  hcomp3.Init.InputMinus = COMP_INPUT_MINUS_DAC3_CH1;
+  hcomp3.Init.OutputPol = COMP_OUTPUTPOL_INVERTED;
+  hcomp3.Init.Hysteresis = COMP_HYSTERESIS_NONE;
+  hcomp3.Init.BlankingSrce = COMP_BLANKINGSRC_NONE;
+  hcomp3.Init.TriggerMode = COMP_TRIGGERMODE_NONE;
+  if (HAL_COMP_Init(&hcomp3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN COMP3_Init 2 */
+
+  /* USER CODE END COMP3_Init 2 */
+
+}
+
+/**
   * @brief DAC3 Initialization Function
   * @param None
   * @retval None
@@ -286,12 +322,19 @@ static void MX_DAC3_Init(void)
   sConfig.DAC_DMADoubleDataMode = DISABLE;
   sConfig.DAC_SignedFormat = DISABLE;
   sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
-  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
-  sConfig.DAC_Trigger2 = DAC_TRIGGER_NONE;
+  sConfig.DAC_Trigger = DAC_TRIGGER_HRTIM_RST_TRG3;
+  sConfig.DAC_Trigger2 = DAC_TRIGGER_HRTIM_STEP_TRG3;
   sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
   sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_INTERNAL;
   sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
   if (HAL_DAC_ConfigChannel(&hdac3, &sConfig, DAC_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure Sawtooth wave generation on DAC OUT1
+  */
+  if (HAL_DACEx_SawtoothWaveGenerate(&hdac3, DAC_CHANNEL_1, DAC_SAWTOOTH_POLARITY_DECREMENT, 4095, 38) != HAL_OK)
   {
     Error_Handler();
   }
@@ -319,6 +362,7 @@ static void MX_HRTIM1_Init(void)
   HRTIM_TimerCfgTypeDef pTimerCfg = {0};
   HRTIM_CompareCfgTypeDef pCompareCfg = {0};
   HRTIM_TimerCtlTypeDef pTimerCtl = {0};
+  HRTIM_TimerEventFilteringCfgTypeDef pTimerEventFilteringCfg = {0};
   HRTIM_OutputCfgTypeDef pOutputCfg = {0};
 
   /* USER CODE BEGIN HRTIM1_Init 1 */
@@ -343,11 +387,11 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pEventCfg.Source = HRTIM_EEV3SRC_COMP6_OUT;
+  pEventCfg.Source = HRTIM_EEV5SRC_COMP3_OUT;
   pEventCfg.Polarity = HRTIM_EVENTPOLARITY_HIGH;
   pEventCfg.Sensitivity = HRTIM_EVENTSENSITIVITY_LEVEL;
   pEventCfg.FastMode = HRTIM_EVENTFASTMODE_DISABLE;
-  if (HAL_HRTIM_EventConfig(&hhrtim1, HRTIM_EVENT_3, &pEventCfg) != HAL_OK)
+  if (HAL_HRTIM_EventConfig(&hhrtim1, HRTIM_EVENT_5, &pEventCfg) != HAL_OK)
   {
     Error_Handler();
   }
@@ -393,7 +437,12 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pCompareCfg.CompareValue = 4000;
+  pCompareCfg.CompareValue = 359;
+  if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_MASTER, HRTIM_COMPAREUNIT_2, &pCompareCfg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  pCompareCfg.CompareValue = 5350;
   if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_MASTER, HRTIM_COMPAREUNIT_3, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();
@@ -404,7 +453,10 @@ static void MX_HRTIM1_Init(void)
     Error_Handler();
   }
   pTimerCtl.UpDownMode = HRTIM_TIMERUPDOWNMODE_UP;
-  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_DISABLED;
+  pTimerCtl.TrigHalf = HRTIM_TIMERTRIGHALF_DISABLED;
+  pTimerCtl.DualChannelDacReset = HRTIM_TIMER_DCDR_COUNTER;
+  pTimerCtl.DualChannelDacStep = HRTIM_TIMER_DCDS_CMP2;
+  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_ENABLED;
   if (HAL_HRTIM_WaveformTimerControl(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, &pTimerCtl) != HAL_OK)
   {
     Error_Handler();
@@ -434,7 +486,7 @@ static void MX_HRTIM1_Init(void)
   }
   pTimerCfg.PushPull = HRTIM_TIMPUSHPULLMODE_DISABLED;
   pTimerCfg.DelayedProtectionMode = HRTIM_TIMER_D_E_DELAYEDPROTECTION_DISABLED;
-  pTimerCfg.ResetTrigger = HRTIM_TIMRESETTRIGGER_MASTER_CMP3|HRTIM_TIMRESETTRIGGER_EEV_3;
+  pTimerCfg.ResetTrigger = HRTIM_TIMRESETTRIGGER_MASTER_CMP3|HRTIM_TIMRESETTRIGGER_EEV_5;
   if (HAL_HRTIM_WaveformTimerConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, &pTimerCfg) != HAL_OK)
   {
     Error_Handler();
@@ -444,12 +496,31 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
+  pCompareCfg.CompareValue = 544;
+  pCompareCfg.AutoDelayedMode = HRTIM_AUTODELAYEDMODE_REGULAR;
+  pCompareCfg.AutoDelayedTimeout = 0x0000;
+
+  if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_COMPAREUNIT_2, &pCompareCfg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  pTimerEventFilteringCfg.Filter = HRTIM_TIMEEVFLT_BLANKINGCMP2;
+  pTimerEventFilteringCfg.Latch = HRTIM_TIMEVENTLATCH_DISABLED;
+  if (HAL_HRTIM_TimerEventFilteringConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_EVENT_5, &pTimerEventFilteringCfg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  pTimerEventFilteringCfg.Filter = HRTIM_TIMEEVFLT_BLANKINGCMP1;
+  if (HAL_HRTIM_TimerEventFilteringConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, HRTIM_EVENT_5, &pTimerEventFilteringCfg) != HAL_OK)
+  {
+    Error_Handler();
+  }
   pOutputCfg.Polarity = HRTIM_OUTPUTPOLARITY_HIGH;
   pOutputCfg.SetSource = HRTIM_OUTPUTSET_MASTERCMP1;
-  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERCMP3|HRTIM_OUTPUTSET_EEV_3;
+  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERCMP3|HRTIM_OUTPUTSET_EEV_5;
   pOutputCfg.IdleMode = HRTIM_OUTPUTIDLEMODE_NONE;
   pOutputCfg.IdleLevel = HRTIM_OUTPUTIDLELEVEL_INACTIVE;
-  pOutputCfg.FaultLevel = HRTIM_OUTPUTFAULTLEVEL_NONE;
+  pOutputCfg.FaultLevel = HRTIM_OUTPUTFAULTLEVEL_INACTIVE;
   pOutputCfg.ChopperModeEnable = HRTIM_OUTPUTCHOPPERMODE_DISABLED;
   pOutputCfg.BurstModeEntryDelayed = HRTIM_OUTPUTBURSTMODEENTRY_REGULAR;
   if (HAL_HRTIM_WaveformOutputConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_OUTPUT_TA1, &pOutputCfg) != HAL_OK)
@@ -459,6 +530,7 @@ static void MX_HRTIM1_Init(void)
   pOutputCfg.Polarity = HRTIM_OUTPUTPOLARITY_LOW;
   pOutputCfg.SetSource = HRTIM_OUTPUTSET_MASTERPER;
   pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_TIMBEV5_TIMDCMP3;
+  pOutputCfg.FaultLevel = HRTIM_OUTPUTFAULTLEVEL_NONE;
   if (HAL_HRTIM_WaveformOutputConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_B, HRTIM_OUTPUT_TB1, &pOutputCfg) != HAL_OK)
   {
     Error_Handler();
@@ -476,7 +548,7 @@ static void MX_HRTIM1_Init(void)
     Error_Handler();
   }
   pOutputCfg.SetSource = HRTIM_OUTPUTSET_MASTERCMP1;
-  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERCMP3|HRTIM_OUTPUTSET_EEV_3;
+  pOutputCfg.ResetSource = HRTIM_OUTPUTRESET_MASTERCMP3|HRTIM_OUTPUTSET_EEV_5;
   if (HAL_HRTIM_WaveformOutputConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_OUTPUT_TA2, &pOutputCfg) != HAL_OK)
   {
     Error_Handler();
@@ -498,6 +570,7 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
+  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_DISABLED;
   if (HAL_HRTIM_WaveformTimerControl(&hhrtim1, HRTIM_TIMERINDEX_TIMER_B, &pTimerCtl) != HAL_OK)
   {
     Error_Handler();
@@ -517,6 +590,10 @@ static void MX_HRTIM1_Init(void)
     Error_Handler();
   }
   if (HAL_HRTIM_WaveformTimerControl(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, &pTimerCtl) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, HRTIM_COMPAREUNIT_1, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();
   }
