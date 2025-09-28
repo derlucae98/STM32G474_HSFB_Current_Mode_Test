@@ -442,7 +442,7 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pCompareCfg.CompareValue = 5350;
+  pCompareCfg.CompareValue = 5200;
   if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_MASTER, HRTIM_COMPAREUNIT_3, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();
@@ -454,9 +454,7 @@ static void MX_HRTIM1_Init(void)
   }
   pTimerCtl.UpDownMode = HRTIM_TIMERUPDOWNMODE_UP;
   pTimerCtl.TrigHalf = HRTIM_TIMERTRIGHALF_DISABLED;
-  pTimerCtl.DualChannelDacReset = HRTIM_TIMER_DCDR_COUNTER;
-  pTimerCtl.DualChannelDacStep = HRTIM_TIMER_DCDS_CMP2;
-  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_ENABLED;
+  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_DISABLED;
   if (HAL_HRTIM_WaveformTimerControl(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, &pTimerCtl) != HAL_OK)
   {
     Error_Handler();
@@ -570,7 +568,6 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_DISABLED;
   if (HAL_HRTIM_WaveformTimerControl(&hhrtim1, HRTIM_TIMERINDEX_TIMER_B, &pTimerCtl) != HAL_OK)
   {
     Error_Handler();
@@ -580,7 +577,16 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
+  pTimerCtl.DualChannelDacReset = HRTIM_TIMER_DCDR_COUNTER;
+  pTimerCtl.DualChannelDacStep = HRTIM_TIMER_DCDS_CMP2;
+  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_ENABLED;
   if (HAL_HRTIM_WaveformTimerControl(&hhrtim1, HRTIM_TIMERINDEX_TIMER_C, &pTimerCtl) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  pCompareCfg.CompareValue = 359;
+
+  if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_C, HRTIM_COMPAREUNIT_2, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();
   }
@@ -589,10 +595,12 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
+  pTimerCtl.DualChannelDacEnable = HRTIM_TIMER_DCDE_DISABLED;
   if (HAL_HRTIM_WaveformTimerControl(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, &pTimerCtl) != HAL_OK)
   {
     Error_Handler();
   }
+  pCompareCfg.CompareValue = 544;
   if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, HRTIM_COMPAREUNIT_1, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();

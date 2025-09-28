@@ -37,6 +37,7 @@ void app_init(void) {
 
     HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
     HAL_OPAMP_Start(&hopamp6);
+    HAL_COMP_Start(&hcomp3);
 
     HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_val, 1);
     __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); // Disable DMA half-transfer IRQ
