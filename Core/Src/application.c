@@ -51,6 +51,8 @@ void app_init(void) {
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC2);
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TE1);
 
+    init_pwm();
+
     HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1,
             HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B
                     | HRTIM_TIMERID_TIMER_C | HRTIM_TIMERID_TIMER_D
@@ -105,6 +107,34 @@ void ctrl_2p2z_init(ctrl_2p2z_t *ctrl, float B0, float B1, float B2, float A1, f
     ctrl->ctrl_2p2z_A2 = A2;
     ctrl->ctrl_2p2z_sat_min = sat_min;
     ctrl->ctrl_2p2z_sat_max = sat_max;
+}
+
+void init_pwm(void) {
+    LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_MASTER, NS_TO_TICKS(DELAY_SEC_TO_PRI_NS));
+    LL_HRTIM_TIM_SetCompare3(HRTIM1, LL_HRTIM_TIMER_D, NS_TO_TICKS(DELAY_PRI_TO_SEC_NS));
+
+    if (DUTY_TICKS >= PWM_MAX_DUTY_PERIOD_TICKS) {
+        // Assert: Duty cycle out of allowed range. This will lead to dangerously wrong PWM signals!
+        Error_Handler();
+    }
+
+    LL_HRTIM_TIM_SetCompare3(HRTIM1, LL_HRTIM_TIMER_MASTER, DUTY_TICKS);
+
+    LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_MASTER, PWM_PERIOD_TICKS);
+    LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_A,      PWM_PERIOD_TICKS);
+    LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_B,      PWM_PERIOD_TICKS);
+    LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_C,      PWM_PERIOD_TICKS);
+    LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_D,      PWM_PERIOD_TICKS);
+
+    if (NS_TO_TICKS(LEADING_EDGE_BLANKING_NS) <= PWM_MINIMUM_ON_TIME_TICKS) {
+        //Assert: LEB time to low! Increase leading edge blanking to more than 18ns.
+        Error_Handler();
+    }
+
+    LL_HRTIM_TIM_SetCompare2(HRTIM1, LL_HRTIM_TIMER_A, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
+    LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_D, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
+
+    LL_HRTIM_TIM_SetCompare2(HRTIM1, LL_HRTIM_TIMER_C, DAC_STEP_TICKS);
 }
 
 void app_loop(void) {
