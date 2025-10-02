@@ -334,7 +334,7 @@ static void MX_DAC3_Init(void)
 
   /** Configure Sawtooth wave generation on DAC OUT1
   */
-  if (HAL_DACEx_SawtoothWaveGenerate(&hdac3, DAC_CHANNEL_1, DAC_SAWTOOTH_POLARITY_DECREMENT, 4095, 1600) != HAL_OK)
+  if (HAL_DACEx_SawtoothWaveGenerate(&hdac3, DAC_CHANNEL_1, DAC_SAWTOOTH_POLARITY_DECREMENT, 4095, 2000) != HAL_OK)
   {
     Error_Handler();
   }
@@ -432,7 +432,7 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pCompareCfg.CompareValue = 109;
+  pCompareCfg.CompareValue = 1100;
   if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_MASTER, HRTIM_COMPAREUNIT_1, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();
@@ -442,7 +442,7 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pCompareCfg.CompareValue = 5200;
+  pCompareCfg.CompareValue = 3000;
   if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_MASTER, HRTIM_COMPAREUNIT_3, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();
@@ -494,7 +494,7 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pCompareCfg.CompareValue = 1000;
+  pCompareCfg.CompareValue = 110;
   pCompareCfg.AutoDelayedMode = HRTIM_AUTODELAYEDMODE_REGULAR;
   pCompareCfg.AutoDelayedTimeout = 0x0000;
 
@@ -599,12 +599,12 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pCompareCfg.CompareValue = 1000;
+  pCompareCfg.CompareValue = 110;
   if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, HRTIM_COMPAREUNIT_1, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();
   }
-  pCompareCfg.CompareValue = 120;
+  pCompareCfg.CompareValue = 1100;
   if (HAL_HRTIM_WaveformCompareConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, HRTIM_COMPAREUNIT_3, &pCompareCfg) != HAL_OK)
   {
     Error_Handler();

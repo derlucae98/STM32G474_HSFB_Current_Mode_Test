@@ -33,7 +33,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 
 void app_init(void) {
 
-    ctrl_2p2z_init(&ctrl_u, U_B0, U_B1, U_B2, U_A1, U_A2, U_K, 0, 4095);
+    ctrl_2p2z_init(&ctrl_u, U_B0, U_B1, U_B2, U_A1, U_A2, U_K, 0, 3500);
 
     HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
     HAL_OPAMP_Start(&hopamp6);
@@ -70,13 +70,15 @@ uint16_t ctrl_2p2z_update(ctrl_2p2z_t *ctrl, uint16_t input, uint16_t ref) {
     ctrl->ctrl_2p2z_y[0] = ctrl->ctrl_2p2z_y[1];
     ctrl->ctrl_2p2z_y[1] = ctrl->ctrl_2p2z_y[2];
 
-    float yb0 = ctrl->ctrl_2p2z_B0 * ctrl->ctrl_2p2z_x[2];
-    float yb1 = ctrl->ctrl_2p2z_B1 * ctrl->ctrl_2p2z_x[1];
-    float yb2 = ctrl->ctrl_2p2z_B2 * ctrl->ctrl_2p2z_x[0];
-    float ya1 = ctrl->ctrl_2p2z_A1 * ctrl->ctrl_2p2z_y[1];
-    float ya2 = ctrl->ctrl_2p2z_A2 * ctrl->ctrl_2p2z_y[0];
+//    float yb0 = ctrl->ctrl_2p2z_B0 * ctrl->ctrl_2p2z_x[2];
+//    float yb1 = ctrl->ctrl_2p2z_B1 * ctrl->ctrl_2p2z_x[1];
+//    float yb2 = ctrl->ctrl_2p2z_B2 * ctrl->ctrl_2p2z_x[0];
+//    float ya1 = ctrl->ctrl_2p2z_A1 * ctrl->ctrl_2p2z_y[1];
+//    float ya2 = ctrl->ctrl_2p2z_A2 * ctrl->ctrl_2p2z_y[0];
+//
+//    ctrl->ctrl_2p2z_y[2] = yb0 + yb1 + yb2 + ya1 + ya2;
 
-    ctrl->ctrl_2p2z_y[2] = yb0 + yb1 + yb2 + ya1 + ya2;
+    ctrl->ctrl_2p2z_y[2] = err * U_K;
 
     // Clamp output to max and min value
     if (ctrl->ctrl_2p2z_y[2] >= ctrl->ctrl_2p2z_sat_max) {

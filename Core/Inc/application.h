@@ -20,8 +20,8 @@ extern OPAMP_HandleTypeDef hopamp6;
 extern COMP_HandleTypeDef hcomp3;
 
 // Start parameters from WDS:
-#define U_K (1.0f)
-//#define U_K (+10.989011)
+//#define U_K (1.0f)
+#define U_K (+10.989011)
 #define U_B0 (+0.395070356916)
 #define U_B1 (+0.000393919184)
 #define U_B2 (-0.394676437733)
