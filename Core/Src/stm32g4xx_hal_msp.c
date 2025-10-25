@@ -383,7 +383,6 @@ void HAL_FDCAN_MspDeInit(FDCAN_HandleTypeDef* hfdcan)
   */
 void HAL_HRTIM_MspInit(HRTIM_HandleTypeDef* hhrtim)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
   if(hhrtim->Instance==HRTIM1)
   {
     /* USER CODE BEGIN HRTIM1_MspInit 0 */
@@ -391,18 +390,6 @@ void HAL_HRTIM_MspInit(HRTIM_HandleTypeDef* hhrtim)
     /* USER CODE END HRTIM1_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_HRTIM1_CLK_ENABLE();
-
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**HRTIM1 GPIO Configuration
-    PB9     ------> HRTIM1_EEV5
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_9;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF13_HRTIM1;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
     /* USER CODE BEGIN HRTIM1_MspInit 1 */
 
     /* USER CODE END HRTIM1_MspInit 1 */
@@ -426,7 +413,6 @@ void HAL_HRTIM_MspPostInit(HRTIM_HandleTypeDef* hhrtim)
     /**HRTIM1 GPIO Configuration
     PB12     ------> HRTIM1_CHC1
     PB13     ------> HRTIM1_CHC2
-    PC6     ------> HRTIM1_CHF1
     PC8     ------> HRTIM1_CHE1
     PA8     ------> HRTIM1_CHA1
     PA9     ------> HRTIM1_CHA2
@@ -439,13 +425,6 @@ void HAL_HRTIM_MspPostInit(HRTIM_HandleTypeDef* hhrtim)
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF13_HRTIM1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-    GPIO_InitStruct.Pin = GPIO_PIN_6;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF13_HRTIM1;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = GPIO_PIN_8;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -482,24 +461,6 @@ void HAL_HRTIM_MspDeInit(HRTIM_HandleTypeDef* hhrtim)
     /* USER CODE END HRTIM1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_HRTIM1_CLK_DISABLE();
-
-    /**HRTIM1 GPIO Configuration
-    PB12     ------> HRTIM1_CHC1
-    PB13     ------> HRTIM1_CHC2
-    PC6     ------> HRTIM1_CHF1
-    PC8     ------> HRTIM1_CHE1
-    PA8     ------> HRTIM1_CHA1
-    PA9     ------> HRTIM1_CHA2
-    PA10     ------> HRTIM1_CHB1
-    PA11     ------> HRTIM1_CHB2
-    PB9     ------> HRTIM1_EEV5
-    */
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_9);
-
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6|GPIO_PIN_8);
-
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11);
-
     /* USER CODE BEGIN HRTIM1_MspDeInit 1 */
 
     /* USER CODE END HRTIM1_MspDeInit 1 */

@@ -33,11 +33,11 @@ void app_init(void) {
 
     HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
     HAL_OPAMP_Start(&hopamp6);
-    //HAL_COMP_Start(&hcomp3);
+    HAL_COMP_Start(&hcomp3);
 
-    //HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_val, 1);
-    //__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); // Disable DMA half-transfer IRQ
-    //__HAL_DMA_ENABLE_IT(&hdma_adc1, DMA_IT_TC); //Enable DMA transfer complete IRQ. This will call HAL_ADC_ConvCpltCallback()
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_val, 1);
+    __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); // Disable DMA half-transfer IRQ
+    __HAL_DMA_ENABLE_IT(&hdma_adc1, DMA_IT_TC); //Enable DMA transfer complete IRQ. This will call HAL_ADC_ConvCpltCallback()
 
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA1);
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA2);
@@ -46,14 +46,13 @@ void app_init(void) {
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC1);
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC2);
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TE1);
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TF1);
 
     init_pwm();
 
     HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1,
             HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B
                     | HRTIM_TIMERID_TIMER_C | HRTIM_TIMERID_TIMER_D
-                    | HRTIM_TIMERID_TIMER_E | HRTIM_TIMERID_TIMER_F);
+                    | HRTIM_TIMERID_TIMER_E);
 
 }
 
@@ -135,9 +134,6 @@ void init_pwm(void) {
 
     LL_HRTIM_TIM_SetCompare2(HRTIM1, LL_HRTIM_TIMER_A, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
     LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_D, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
-
-    // Only for testing
-    LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_F, NS_TO_TICKS((TEST_CURRENT_PEAK_NS + DELAY_PRI_TO_SEC_NS)));
 
     LL_HRTIM_TIM_SetCompare2(HRTIM1, LL_HRTIM_TIMER_C, DAC_STEP_TICKS);
 }
