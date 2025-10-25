@@ -46,13 +46,14 @@ void app_init(void) {
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC1);
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC2);
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TE1);
+    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TF1);
 
     init_pwm();
 
     HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1,
             HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B
                     | HRTIM_TIMERID_TIMER_C | HRTIM_TIMERID_TIMER_D
-                    | HRTIM_TIMERID_TIMER_E);
+                    | HRTIM_TIMERID_TIMER_E | HRTIM_TIMERID_TIMER_F);
 
 }
 
@@ -121,6 +122,7 @@ void init_pwm(void) {
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_B,      PWM_PERIOD_TICKS);
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_C,      PWM_PERIOD_TICKS);
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_D,      PWM_PERIOD_TICKS);
+    LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_F,      PWM_PERIOD_TICKS);
 
 //    if (NS_TO_TICKS(LEADING_EDGE_BLANKING_NS) <= PWM_MINIMUM_ON_TIME_TICKS) {
 //        //Assert: LEB time to low! Increase leading edge blanking to more than 18ns.
