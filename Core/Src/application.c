@@ -33,11 +33,11 @@ void app_init(void) {
 
     HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
     HAL_OPAMP_Start(&hopamp6);
-    HAL_COMP_Start(&hcomp3);
+    //HAL_COMP_Start(&hcomp3);
 
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_val, 1);
-    __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); // Disable DMA half-transfer IRQ
-    __HAL_DMA_ENABLE_IT(&hdma_adc1, DMA_IT_TC); //Enable DMA transfer complete IRQ. This will call HAL_ADC_ConvCpltCallback()
+    //HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_val, 1);
+    //__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); // Disable DMA half-transfer IRQ
+    //__HAL_DMA_ENABLE_IT(&hdma_adc1, DMA_IT_TC); //Enable DMA transfer complete IRQ. This will call HAL_ADC_ConvCpltCallback()
 
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA1);
     HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA2);
@@ -110,12 +110,16 @@ void init_pwm(void) {
     LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_MASTER, NS_TO_TICKS(DELAY_SEC_TO_PRI_NS));
     LL_HRTIM_TIM_SetCompare3(HRTIM1, LL_HRTIM_TIMER_D, NS_TO_TICKS(DELAY_PRI_TO_SEC_NS));
 
-//    if (DUTY_TICKS >= PWM_MAX_DUTY_PERIOD_TICKS) {
-//        // Assert: Duty cycle out of allowed range. This will lead to dangerously wrong PWM signals!
-//        Error_Handler();
-//    }
+    uint32_t maxDuty;
 
-    LL_HRTIM_TIM_SetCompare3(HRTIM1, LL_HRTIM_TIMER_MASTER, DUTY_TICKS);
+    if (DUTY_TICKS > MAX_ALLOWED_DUTY_TICKS) {
+        // Duty cycle out of allowed range. Clamp to maximum value
+        maxDuty = MAX_ALLOWED_DUTY_TICKS;
+    } else {
+        maxDuty = DUTY_TICKS;
+    }
+
+    LL_HRTIM_TIM_SetCompare3(HRTIM1, LL_HRTIM_TIMER_MASTER, maxDuty);
 
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_MASTER, PWM_PERIOD_TICKS);
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_A,      PWM_PERIOD_TICKS);
@@ -124,13 +128,16 @@ void init_pwm(void) {
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_D,      PWM_PERIOD_TICKS);
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_F,      PWM_PERIOD_TICKS);
 
-//    if (NS_TO_TICKS(LEADING_EDGE_BLANKING_NS) <= PWM_MINIMUM_ON_TIME_TICKS) {
-//        //Assert: LEB time to low! Increase leading edge blanking to more than 18ns.
-//        Error_Handler();
-//    }
+    if (NS_TO_TICKS(LEADING_EDGE_BLANKING_NS) <= PWM_MINIMUM_ON_TIME_TICKS) {
+        //Assert: LEB time to low! Increase leading edge blanking to more than 18ns.
+        Error_Handler();
+    }
 
     LL_HRTIM_TIM_SetCompare2(HRTIM1, LL_HRTIM_TIMER_A, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
     LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_D, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
+
+    // Only for testing
+    LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_F, NS_TO_TICKS((TEST_CURRENT_PEAK_NS + DELAY_PRI_TO_SEC_NS)));
 
     LL_HRTIM_TIM_SetCompare2(HRTIM1, LL_HRTIM_TIMER_C, DAC_STEP_TICKS);
 }

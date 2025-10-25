@@ -34,6 +34,7 @@ extern COMP_HandleTypeDef hcomp3;
 #define SLOPE_VPP (0.4556)
 #define DECVAL (1.6627)
 
+#define NS_TO_TICKS(x) ((x + 0.5) * 5.44e9/1e9)
 
 // HRTIM equivalent frequency in Hz
 #define HRTIM_EQUIVALENT_FREQ 5.44e9
@@ -41,8 +42,8 @@ extern COMP_HandleTypeDef hcomp3;
 // PWM Frequency (For full bridge = double) in Hz
 #define PWM_FREQ 600e3
 
-// Maximum duty cycle (For full bridge = double)
-#define DUTY_MAX (2 * 0.40f)
+// Maximum requested duty cycle (For full bridge = double)
+#define DUTY_MAX_REQUESTED (2 * 0.45f)
 
 // Primary falling edge to secondary rising edge in nanoseconds
 #define DELAY_PRI_TO_SEC_NS 60
@@ -61,12 +62,12 @@ extern COMP_HandleTypeDef hcomp3;
 
 #define PWM_PERIOD_TICKS (HRTIM_EQUIVALENT_FREQ/PWM_FREQ)
 
-#define DUTY_TICKS (DUTY_MAX * PWM_PERIOD_TICKS)
+#define DUTY_TICKS (DUTY_MAX_REQUESTED * (PWM_PERIOD_TICKS + NS_TO_TICKS(DELAY_SEC_TO_PRI_NS)))
 
-#define NS_TO_TICKS(x) (x * 5.44e9/1e9)
+// Only for testing
+#define TEST_CURRENT_PEAK_NS 1000
 
-// Ensure that maximum period ticks are smaller than (PWM_PERIOD_TICKS-DELAY_PRI_TO_SEC_NS)
-#define PWM_MAX_DUTY_PERIOD_TICKS (PWM_PERIOD_TICKS-DELAY_PRI_TO_SEC_NS)
+#define MAX_ALLOWED_DUTY_TICKS (PWM_PERIOD_TICKS - (NS_TO_TICKS(DELAY_SEC_TO_PRI_NS) + PWM_MINIMUM_ON_TIME_TICKS))
 
 typedef struct ctrl_2p2z {
     float ctrl_2p2z_B0;

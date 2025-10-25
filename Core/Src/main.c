@@ -40,6 +40,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+
+COM_InitTypeDef BspCOMInit;
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
@@ -117,6 +119,17 @@ int main(void)
     app_init();
 
   /* USER CODE END 2 */
+
+  /* Initialize COM1 port (115200, 8 bits (7-bit data + 1 stop bit), no parity */
+  BspCOMInit.BaudRate   = 115200;
+  BspCOMInit.WordLength = COM_WORDLENGTH_8B;
+  BspCOMInit.StopBits   = COM_STOPBITS_1;
+  BspCOMInit.Parity     = COM_PARITY_NONE;
+  BspCOMInit.HwFlowCtl  = COM_HWCONTROL_NONE;
+  if (BSP_COM_Init(COM1, &BspCOMInit) != BSP_ERROR_NONE)
+  {
+    Error_Handler();
+  }
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -415,10 +428,10 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pEventCfg.Source = HRTIM_EEV5SRC_COMP3_OUT;
-  pEventCfg.Polarity = HRTIM_EVENTPOLARITY_HIGH;
+  pEventCfg.Source = HRTIM_EEV5SRC_GPIO;
+  pEventCfg.Polarity = HRTIM_EVENTPOLARITY_LOW;
   pEventCfg.Sensitivity = HRTIM_EVENTSENSITIVITY_LEVEL;
-  pEventCfg.FastMode = HRTIM_EVENTFASTMODE_DISABLE;
+  pEventCfg.FastMode = HRTIM_EVENTFASTMODE_ENABLE;
   if (HAL_HRTIM_EventConfig(&hhrtim1, HRTIM_EVENT_5, &pEventCfg) != HAL_OK)
   {
     Error_Handler();
@@ -536,7 +549,7 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
-  pTimerEventFilteringCfg.Filter = HRTIM_TIMEEVFLT_BLANKINGCMP1;
+  pTimerEventFilteringCfg.Filter = HRTIM_TIMEEVFLT_BLANKINGCMP3;
   if (HAL_HRTIM_TimerEventFilteringConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_D, HRTIM_EVENT_5, &pTimerEventFilteringCfg) != HAL_OK)
   {
     Error_Handler();
@@ -573,6 +586,7 @@ static void MX_HRTIM1_Init(void)
   {
     Error_Handler();
   }
+  pOutputCfg.SetSource = HRTIM_OUTPUTSET_TIMFEV6_TIMDCMP3;
   if (HAL_HRTIM_WaveformOutputConfig(&hhrtim1, HRTIM_TIMERINDEX_TIMER_F, HRTIM_OUTPUT_TF1, &pOutputCfg) != HAL_OK)
   {
     Error_Handler();
