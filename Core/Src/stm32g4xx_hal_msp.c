@@ -199,21 +199,22 @@ void HAL_COMP_MspInit(COMP_HandleTypeDef* hcomp)
     /* USER CODE END COMP3_MspInit 0 */
 
     __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
     /**COMP3 GPIO Configuration
     PC1     ------> COMP3_INP
-    PC2     ------> COMP3_OUT
+    PB7     ------> COMP3_OUT
     */
     GPIO_InitStruct.Pin = GPIO_PIN_1;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_2;
+    GPIO_InitStruct.Pin = GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF3_COMP3;
-    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+    GPIO_InitStruct.Alternate = GPIO_AF8_COMP3;
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     /* USER CODE BEGIN COMP3_MspInit 1 */
 
@@ -239,9 +240,11 @@ void HAL_COMP_MspDeInit(COMP_HandleTypeDef* hcomp)
 
     /**COMP3 GPIO Configuration
     PC1     ------> COMP3_INP
-    PC2     ------> COMP3_OUT
+    PB7     ------> COMP3_OUT
     */
-    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_1|GPIO_PIN_2);
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_1);
+
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_7);
 
     /* USER CODE BEGIN COMP3_MspDeInit 1 */
 

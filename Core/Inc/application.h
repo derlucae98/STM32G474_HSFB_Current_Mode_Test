@@ -12,7 +12,6 @@
 #include "stm32g4xx_ll_dac.h"
 #include "stm32g4xx_ll_hrtim.h"
 
-extern COM_InitTypeDef BspCOMInit;
 extern ADC_HandleTypeDef hadc1;
 extern DMA_HandleTypeDef hdma_adc1;
 extern DAC_HandleTypeDef hdac3;
@@ -22,14 +21,14 @@ extern COMP_HandleTypeDef hcomp3;
 
 // Start parameters from WDS:
 //#define U_K (1.0f)
-#define U_K (+10.989011)
-#define U_B0 (+0.395070356916)
-#define U_B1 (+0.000393919184)
-#define U_B2 (-0.394676437733)
-#define U_A1 (+1.714285714286)
-#define U_A2 (-0.714285714286)
+#define U_K  (13.157895)
+#define U_B0 (0.168209770932)
+#define U_B1 (0.000856213136)
+#define U_B2 (-0.167353557796)
+#define U_A1 (1.756097560976)
+#define U_A2 (-0.756097560976)
 
-#define REF (3614)
+#define REF (3984)
 #define DUTY_TICKS_MIN (0)
 #define DUTY_TICKS_MAX (3686)
 #define SLOPE_VPP (0.4556)
@@ -40,16 +39,16 @@ extern COMP_HandleTypeDef hcomp3;
 #define HRTIM_EQUIVALENT_FREQ 5.44e9
 
 // PWM Frequency (For full bridge = double) in Hz
-#define PWM_FREQ 1e6
+#define PWM_FREQ 600e3
 
 // Maximum duty cycle (For full bridge = double)
 #define DUTY_MAX (2 * 0.40f)
 
 // Primary falling edge to secondary rising edge in nanoseconds
-#define DELAY_PRI_TO_SEC_NS 200
+#define DELAY_PRI_TO_SEC_NS 60
 
 // Secondary falling edge to primary rising edge in nanoseconds
-#define DELAY_SEC_TO_PRI_NS 200
+#define DELAY_SEC_TO_PRI_NS 60
 
 // Leading edge blanking in ns
 #define LEADING_EDGE_BLANKING_NS 25

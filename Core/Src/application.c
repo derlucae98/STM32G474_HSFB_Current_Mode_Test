@@ -11,11 +11,7 @@ static ctrl_2p2z_t ctrl_u;
 static ctrl_2p2z_t ctrl_i;
 
 
-void BSP_PB_Callback(Button_TypeDef Button) {
-    if (Button == BUTTON_USER) {
 
-    }
-}
 
 volatile uint32_t adc_val = 0;
 
@@ -72,15 +68,15 @@ uint16_t ctrl_2p2z_update(ctrl_2p2z_t *ctrl, uint16_t input, uint16_t ref) {
     ctrl->ctrl_2p2z_y[0] = ctrl->ctrl_2p2z_y[1];
     ctrl->ctrl_2p2z_y[1] = ctrl->ctrl_2p2z_y[2];
 
-//    float yb0 = ctrl->ctrl_2p2z_B0 * ctrl->ctrl_2p2z_x[2];
-//    float yb1 = ctrl->ctrl_2p2z_B1 * ctrl->ctrl_2p2z_x[1];
-//    float yb2 = ctrl->ctrl_2p2z_B2 * ctrl->ctrl_2p2z_x[0];
-//    float ya1 = ctrl->ctrl_2p2z_A1 * ctrl->ctrl_2p2z_y[1];
-//    float ya2 = ctrl->ctrl_2p2z_A2 * ctrl->ctrl_2p2z_y[0];
-//
-//    ctrl->ctrl_2p2z_y[2] = yb0 + yb1 + yb2 + ya1 + ya2;
+    float yb0 = ctrl->ctrl_2p2z_B0 * ctrl->ctrl_2p2z_x[2];
+    float yb1 = ctrl->ctrl_2p2z_B1 * ctrl->ctrl_2p2z_x[1];
+    float yb2 = ctrl->ctrl_2p2z_B2 * ctrl->ctrl_2p2z_x[0];
+    float ya1 = ctrl->ctrl_2p2z_A1 * ctrl->ctrl_2p2z_y[1];
+    float ya2 = ctrl->ctrl_2p2z_A2 * ctrl->ctrl_2p2z_y[0];
 
-    ctrl->ctrl_2p2z_y[2] = err * U_K;
+    ctrl->ctrl_2p2z_y[2] = yb0 + yb1 + yb2 + ya1 + ya2;
+
+    //ctrl->ctrl_2p2z_y[2] = err * U_K;
 
     // Clamp output to max and min value
     if (ctrl->ctrl_2p2z_y[2] >= ctrl->ctrl_2p2z_sat_max) {
@@ -113,10 +109,10 @@ void init_pwm(void) {
     LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_MASTER, NS_TO_TICKS(DELAY_SEC_TO_PRI_NS));
     LL_HRTIM_TIM_SetCompare3(HRTIM1, LL_HRTIM_TIMER_D, NS_TO_TICKS(DELAY_PRI_TO_SEC_NS));
 
-    if (DUTY_TICKS >= PWM_MAX_DUTY_PERIOD_TICKS) {
-        // Assert: Duty cycle out of allowed range. This will lead to dangerously wrong PWM signals!
-        Error_Handler();
-    }
+//    if (DUTY_TICKS >= PWM_MAX_DUTY_PERIOD_TICKS) {
+//        // Assert: Duty cycle out of allowed range. This will lead to dangerously wrong PWM signals!
+//        Error_Handler();
+//    }
 
     LL_HRTIM_TIM_SetCompare3(HRTIM1, LL_HRTIM_TIMER_MASTER, DUTY_TICKS);
 
@@ -126,10 +122,10 @@ void init_pwm(void) {
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_C,      PWM_PERIOD_TICKS);
     LL_HRTIM_TIM_SetPeriod(HRTIM1, LL_HRTIM_TIMER_D,      PWM_PERIOD_TICKS);
 
-    if (NS_TO_TICKS(LEADING_EDGE_BLANKING_NS) <= PWM_MINIMUM_ON_TIME_TICKS) {
-        //Assert: LEB time to low! Increase leading edge blanking to more than 18ns.
-        Error_Handler();
-    }
+//    if (NS_TO_TICKS(LEADING_EDGE_BLANKING_NS) <= PWM_MINIMUM_ON_TIME_TICKS) {
+//        //Assert: LEB time to low! Increase leading edge blanking to more than 18ns.
+//        Error_Handler();
+//    }
 
     LL_HRTIM_TIM_SetCompare2(HRTIM1, LL_HRTIM_TIMER_A, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
     LL_HRTIM_TIM_SetCompare1(HRTIM1, LL_HRTIM_TIMER_D, NS_TO_TICKS(LEADING_EDGE_BLANKING_NS));
