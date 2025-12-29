@@ -12,12 +12,9 @@
 #include "stm32g4xx_ll_dac.h"
 #include "stm32g4xx_ll_hrtim.h"
 
-extern ADC_HandleTypeDef hadc1;
-extern DMA_HandleTypeDef hdma_adc1;
-extern DAC_HandleTypeDef hdac3;
 extern HRTIM_HandleTypeDef hhrtim1;
-extern OPAMP_HandleTypeDef hopamp6;
-extern COMP_HandleTypeDef hcomp3;
+
+extern FDCAN_HandleTypeDef hfdcan2;
 
 // Start parameters from WDS:
 //#define U_K (1.0f)

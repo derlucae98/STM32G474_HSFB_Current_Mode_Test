@@ -40,18 +40,9 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-ADC_HandleTypeDef hadc1;
-DMA_HandleTypeDef hdma_adc1;
-
-COMP_HandleTypeDef hcomp3;
-
-DAC_HandleTypeDef hdac3;
-
 FDCAN_HandleTypeDef hfdcan2;
 
 HRTIM_HandleTypeDef hhrtim1;
-
-OPAMP_HandleTypeDef hopamp6;
 
 /* USER CODE BEGIN PV */
 
@@ -60,12 +51,7 @@ OPAMP_HandleTypeDef hopamp6;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
 static void MX_HRTIM1_Init(void);
-static void MX_ADC1_Init(void);
-static void MX_DAC3_Init(void);
-static void MX_OPAMP6_Init(void);
-static void MX_COMP3_Init(void);
 static void MX_FDCAN2_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -105,12 +91,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_HRTIM1_Init();
-  MX_ADC1_Init();
-  MX_DAC3_Init();
-  MX_OPAMP6_Init();
-  MX_COMP3_Init();
   MX_FDCAN2_Init();
   /* USER CODE BEGIN 2 */
 
@@ -176,160 +157,6 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief ADC1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_ADC1_Init(void)
-{
-
-  /* USER CODE BEGIN ADC1_Init 0 */
-
-  /* USER CODE END ADC1_Init 0 */
-
-  ADC_MultiModeTypeDef multimode = {0};
-  ADC_ChannelConfTypeDef sConfig = {0};
-
-  /* USER CODE BEGIN ADC1_Init 1 */
-
-  /* USER CODE END ADC1_Init 1 */
-
-  /** Common config
-  */
-  hadc1.Instance = ADC1;
-  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
-  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.GainCompensation = 0;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
-  hadc1.Init.LowPowerAutoWait = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.NbrOfConversion = 1;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_EXTERNALTRIG_HRTIM_TRG1;
-  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING;
-  hadc1.Init.DMAContinuousRequests = ENABLE;
-  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
-  hadc1.Init.OversamplingMode = DISABLE;
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure the ADC multi-mode
-  */
-  multimode.Mode = ADC_MODE_INDEPENDENT;
-  if (HAL_ADCEx_MultiModeConfigChannel(&hadc1, &multimode) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Regular Channel
-  */
-  sConfig.Channel = ADC_CHANNEL_1;
-  sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
-  sConfig.SingleDiff = ADC_SINGLE_ENDED;
-  sConfig.OffsetNumber = ADC_OFFSET_NONE;
-  sConfig.Offset = REF;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN ADC1_Init 2 */
-
-  /* USER CODE END ADC1_Init 2 */
-
-}
-
-/**
-  * @brief COMP3 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_COMP3_Init(void)
-{
-
-  /* USER CODE BEGIN COMP3_Init 0 */
-
-  /* USER CODE END COMP3_Init 0 */
-
-  /* USER CODE BEGIN COMP3_Init 1 */
-
-  /* USER CODE END COMP3_Init 1 */
-  hcomp3.Instance = COMP3;
-  hcomp3.Init.InputPlus = COMP_INPUT_PLUS_IO2;
-  hcomp3.Init.InputMinus = COMP_INPUT_MINUS_DAC3_CH1;
-  hcomp3.Init.OutputPol = COMP_OUTPUTPOL_INVERTED;
-  hcomp3.Init.Hysteresis = COMP_HYSTERESIS_NONE;
-  hcomp3.Init.BlankingSrce = COMP_BLANKINGSRC_NONE;
-  hcomp3.Init.TriggerMode = COMP_TRIGGERMODE_NONE;
-  if (HAL_COMP_Init(&hcomp3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN COMP3_Init 2 */
-
-  /* USER CODE END COMP3_Init 2 */
-
-}
-
-/**
-  * @brief DAC3 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_DAC3_Init(void)
-{
-
-  /* USER CODE BEGIN DAC3_Init 0 */
-
-  /* USER CODE END DAC3_Init 0 */
-
-  DAC_ChannelConfTypeDef sConfig = {0};
-
-  /* USER CODE BEGIN DAC3_Init 1 */
-
-  /* USER CODE END DAC3_Init 1 */
-
-  /** DAC Initialization
-  */
-  hdac3.Instance = DAC3;
-  if (HAL_DAC_Init(&hdac3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** DAC channel OUT1 config
-  */
-  sConfig.DAC_HighFrequency = DAC_HIGH_FREQUENCY_INTERFACE_MODE_ABOVE_160MHZ;
-  sConfig.DAC_DMADoubleDataMode = DISABLE;
-  sConfig.DAC_SignedFormat = DISABLE;
-  sConfig.DAC_SampleAndHold = DAC_SAMPLEANDHOLD_DISABLE;
-  sConfig.DAC_Trigger = DAC_TRIGGER_HRTIM_RST_TRG3;
-  sConfig.DAC_Trigger2 = DAC_TRIGGER_HRTIM_STEP_TRG3;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
-  sConfig.DAC_ConnectOnChipPeripheral = DAC_CHIPCONNECT_INTERNAL;
-  sConfig.DAC_UserTrimming = DAC_TRIMMING_FACTORY;
-  if (HAL_DAC_ConfigChannel(&hdac3, &sConfig, DAC_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Sawtooth wave generation on DAC OUT1
-  */
-  if (HAL_DACEx_SawtoothWaveGenerate(&hdac3, DAC_CHANNEL_1, DAC_SAWTOOTH_POLARITY_DECREMENT, 4095, 262) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN DAC3_Init 2 */
-
-  /* USER CODE END DAC3_Init 2 */
-
-}
-
-/**
   * @brief FDCAN2 Initialization Function
   * @param None
   * @retval None
@@ -351,10 +178,10 @@ static void MX_FDCAN2_Init(void)
   hfdcan2.Init.AutoRetransmission = DISABLE;
   hfdcan2.Init.TransmitPause = DISABLE;
   hfdcan2.Init.ProtocolException = DISABLE;
-  hfdcan2.Init.NominalPrescaler = 16;
+  hfdcan2.Init.NominalPrescaler = 10;
   hfdcan2.Init.NominalSyncJumpWidth = 1;
-  hfdcan2.Init.NominalTimeSeg1 = 1;
-  hfdcan2.Init.NominalTimeSeg2 = 1;
+  hfdcan2.Init.NominalTimeSeg1 = 25;
+  hfdcan2.Init.NominalTimeSeg2 = 8;
   hfdcan2.Init.DataPrescaler = 1;
   hfdcan2.Init.DataSyncJumpWidth = 1;
   hfdcan2.Init.DataTimeSeg1 = 1;
@@ -656,55 +483,6 @@ static void MX_HRTIM1_Init(void)
 }
 
 /**
-  * @brief OPAMP6 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_OPAMP6_Init(void)
-{
-
-  /* USER CODE BEGIN OPAMP6_Init 0 */
-
-  /* USER CODE END OPAMP6_Init 0 */
-
-  /* USER CODE BEGIN OPAMP6_Init 1 */
-
-  /* USER CODE END OPAMP6_Init 1 */
-  hopamp6.Instance = OPAMP6;
-  hopamp6.Init.PowerMode = OPAMP_POWERMODE_HIGHSPEED;
-  hopamp6.Init.Mode = OPAMP_FOLLOWER_MODE;
-  hopamp6.Init.NonInvertingInput = OPAMP_NONINVERTINGINPUT_DAC;
-  hopamp6.Init.InternalOutput = DISABLE;
-  hopamp6.Init.TimerControlledMuxmode = OPAMP_TIMERCONTROLLEDMUXMODE_DISABLE;
-  hopamp6.Init.UserTrimming = OPAMP_TRIMMING_FACTORY;
-  if (HAL_OPAMP_Init(&hopamp6) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN OPAMP6_Init 2 */
-
-  /* USER CODE END OPAMP6_Init 2 */
-
-}
-
-/**
-  * Enable DMA controller clock
-  */
-static void MX_DMA_Init(void)
-{
-
-  /* DMA controller clock enable */
-  __HAL_RCC_DMAMUX1_CLK_ENABLE();
-  __HAL_RCC_DMA1_CLK_ENABLE();
-
-  /* DMA interrupt init */
-  /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
-
-}
-
-/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -717,9 +495,9 @@ static void MX_GPIO_Init(void)
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -751,6 +529,7 @@ void Error_Handler(void)
     /* User can add his own implementation to report the HAL error return state */
     __disable_irq();
     while (1) {
+
     }
   /* USER CODE END Error_Handler_Debug */
 }

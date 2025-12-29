@@ -15,44 +15,46 @@ static ctrl_2p2z_t ctrl_i;
 
 volatile uint32_t adc_val = 0;
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
-
-
-    HAL_GPIO_WritePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin, 1);
-
-    uint16_t dac_val = ctrl_2p2z_update(&ctrl_u, adc_val, REF);
-
-    LL_DAC_SetWaveSawtoothResetData(DAC3, LL_DAC_CHANNEL_1, dac_val);
-
-    HAL_GPIO_WritePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin, 0);
-}
+//void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
+//
+//
+//    HAL_GPIO_WritePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin, 1);
+//
+//    uint16_t dac_val = ctrl_2p2z_update(&ctrl_u, adc_val, REF);
+//
+//    LL_DAC_SetWaveSawtoothResetData(DAC3, LL_DAC_CHANNEL_1, dac_val);
+//
+//    HAL_GPIO_WritePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin, 0);
+//}
 
 void app_init(void) {
 
-    ctrl_2p2z_init(&ctrl_u, U_B0, U_B1, U_B2, U_A1, U_A2, U_K, 0, 3500);
+//    ctrl_2p2z_init(&ctrl_u, U_B0, U_B1, U_B2, U_A1, U_A2, U_K, 0, 3500);
+//
+//    HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
+//    HAL_OPAMP_Start(&hopamp6);
+//    HAL_COMP_Start(&hcomp3);
+//
+//    HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_val, 1);
+//    __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); // Disable DMA half-transfer IRQ
+//    __HAL_DMA_ENABLE_IT(&hdma_adc1, DMA_IT_TC); //Enable DMA transfer complete IRQ. This will call HAL_ADC_ConvCpltCallback()
+//
+//    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA1);
+//    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA2);
+//    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB1);
+//    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB2);
+//    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC1);
+//    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC2);
+//    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TE1);
+//
+//    init_pwm();
+//
+//    HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1,
+//            HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B
+//                    | HRTIM_TIMERID_TIMER_C | HRTIM_TIMERID_TIMER_D
+//                    | HRTIM_TIMERID_TIMER_E);
 
-    HAL_DAC_Start(&hdac3, DAC_CHANNEL_1);
-    HAL_OPAMP_Start(&hopamp6);
-    HAL_COMP_Start(&hcomp3);
-
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_val, 1);
-    __HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); // Disable DMA half-transfer IRQ
-    __HAL_DMA_ENABLE_IT(&hdma_adc1, DMA_IT_TC); //Enable DMA transfer complete IRQ. This will call HAL_ADC_ConvCpltCallback()
-
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA1);
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TA2);
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB1);
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB2);
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC1);
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TC2);
-    HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TE1);
-
-    init_pwm();
-
-    HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1,
-            HRTIM_TIMERID_MASTER | HRTIM_TIMERID_TIMER_A | HRTIM_TIMERID_TIMER_B
-                    | HRTIM_TIMERID_TIMER_C | HRTIM_TIMERID_TIMER_D
-                    | HRTIM_TIMERID_TIMER_E);
+    HAL_FDCAN_Start(&hfdcan2);
 
 }
 
@@ -139,5 +141,23 @@ void init_pwm(void) {
 }
 
 void app_loop(void) {
+    FDCAN_TxHeaderTypeDef header;
 
+    header.Identifier = 0x321;
+    header.IdType = FDCAN_STANDARD_ID;
+    header.TxFrameType = FDCAN_DATA_FRAME;
+    header.DataLength = FDCAN_DLC_BYTES_2;
+    header.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
+    header.BitRateSwitch = FDCAN_BRS_OFF;
+    header.FDFormat = FDCAN_CLASSIC_CAN;
+    header.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
+    header.MessageMarker = 0;
+
+    static uint8_t data[2] = {0x55, 0xAA};
+
+    HAL_GPIO_TogglePin(ADC_ISR_DBG_GPIO_Port, ADC_ISR_DBG_Pin);
+
+    HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan2, &header, data);
+
+    HAL_Delay(100);
 }
